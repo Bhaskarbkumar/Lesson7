@@ -5,6 +5,7 @@ import java.awt.event.ActionListener;
 import view.GameBoard;
 
 import java.awt.event.ActionEvent;
+
 public class TimerListener implements ActionListener {
 
 
@@ -16,6 +17,16 @@ public class TimerListener implements ActionListener {
 
     @Override
     public void actionPerformed(ActionEvent e){
-        
+        update();
+        processCollision();
+        gameBoard.getCanvas().repaint();
     }   
+
+    private void processCollision(){
+
+    }
+
+    private void update(){
+        
+    }
 }

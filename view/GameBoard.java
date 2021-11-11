@@ -9,6 +9,7 @@ import javax.swing.JFrame;
 import javax.swing.JPanel;
 import javax.swing.Timer;
 
+import controller.KeyController;
 import controller.TimerListener;
 import model.Shooter;
 import model.ShooterElement;
@@ -18,11 +19,15 @@ public class GameBoard {
     private static final int WIDTH=600;
     private static final int HEIGHT=300;
 
+    public static final int FPS =20;
+    public static final int DELAY = 1000/FPS; 
+
     private JFrame window;
 
     private MyCanvas canvas;
     private Shooter shooter;
     private Timer timer;
+    private TimerListener timerListener;
 
     public GameBoard(JFrame window){
             this.window=window;
@@ -33,9 +38,14 @@ public class GameBoard {
         Container cp = window.getContentPane();
         canvas = new MyCanvas(this,WIDTH,HEIGHT);
         cp.add(BorderLayout.CENTER,canvas);
- 
+        canvas.addKeyListener(new KeyController(this));
+        canvas.requestFocusInWindow();
+        canvas.setFocusable(true);
+
         JButton startButton = new JButton("Start");
         JButton quitButton = new JButton("Quit");
+        startButton.setFocusable(false);
+        quitButton.setFocusable(false);
 
         JPanel southPanel = new JPanel();
         southPanel.add(startButton);
@@ -43,15 +53,17 @@ public class GameBoard {
         cp.add(BorderLayout.SOUTH,southPanel);
  
         canvas.getGameElements().add(new TextDraw("click <start> to Play",100,100,Color.yellow,30));
-        shooter = new Shooter(GameBoard.WIDTH/2,GameBoard.HEIGHT-ShooterElement.SIZE);
-        canvas.getGameElements().add(shooter);
-
-        timer = new Timer(50, new TimerListener(this));
+        //shooter = new Shooter(GameBoard.WIDTH/2,GameBoard.HEIGHT-ShooterElement.SIZE);
+        
+        timerListener = new TimerListener(this);
+        timer = new Timer(DELAY,timerListener);
         
 
         startButton.addActionListener(event-> {
             shooter = new Shooter(GameBoard.WIDTH/2, GameBoard.HEIGHT - ShooterElement.SIZE);
             canvas.getGameElements().clear();
+            canvas.getGameElements().add(shooter);
+            timer.start();
         });
     
         
@@ -59,5 +71,13 @@ public class GameBoard {
 
     public MyCanvas getCanvas(){
         return canvas;
+    }
+
+    public Timer getTimer() {
+        return timer;
+    }
+
+    public TimerListener getTimerListener() {
+        return timerListener;
     }
 }
